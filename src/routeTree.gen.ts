@@ -11,13 +11,18 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthenticatedAchievementsRouteImport } from './routes/_authenticated/achievements'
 import { Route as AuthenticatedAiInsightsRouteImport } from './routes/_authenticated/ai-insights'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
 import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedGamificationRouteImport } from './routes/_authenticated/gamification'
+import { Route as AuthenticatedLeaderboardRouteImport } from './routes/_authenticated/leaderboard'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authenticated/staff.index'
 import { Route as AuthenticatedStaffIdRouteImport } from './routes/_authenticated/staff.$id'
 
@@ -30,6 +35,12 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAchievementsRoute =
+  AuthenticatedAchievementsRouteImport.update({
+    id: '/achievements',
+    path: '/achievements',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAiInsightsRoute = AuthenticatedAiInsightsRouteImport.update({
   id: '/ai-insights',
   path: '/ai-insights',
@@ -61,12 +72,33 @@ const AuthenticatedGamificationRoute =
     path: '/gamification',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedLeaderboardRoute =
+  AuthenticatedLeaderboardRouteImport.update({
+    id: '/leaderboard',
+    path: '/leaderboard',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedNotificationsRoute =
   AuthenticatedNotificationsRouteImport.update({
     id: '/notifications',
     path: '/notifications',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedStaffIndexRoute = AuthenticatedStaffIndexRouteImport.update({
   id: '/staff/',
   path: '/staff/',
@@ -80,25 +112,35 @@ const AuthenticatedStaffIdRoute = AuthenticatedStaffIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/achievements': typeof AuthenticatedAchievementsRoute
   '/ai-insights': typeof AuthenticatedAiInsightsRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/calendar': typeof AuthenticatedCalendarRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/gamification': typeof AuthenticatedGamificationRoute
+  '/leaderboard': typeof AuthenticatedLeaderboardRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/reports': typeof AuthenticatedReportsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/staff/$id': typeof AuthenticatedStaffIdRoute
   '/staff/': typeof AuthenticatedStaffIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/achievements': typeof AuthenticatedAchievementsRoute
   '/ai-insights': typeof AuthenticatedAiInsightsRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/calendar': typeof AuthenticatedCalendarRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/gamification': typeof AuthenticatedGamificationRoute
+  '/leaderboard': typeof AuthenticatedLeaderboardRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/reports': typeof AuthenticatedReportsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/staff/$id': typeof AuthenticatedStaffIdRoute
   '/staff': typeof AuthenticatedStaffIndexRoute
 }
@@ -106,13 +148,18 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/_authenticated/achievements': typeof AuthenticatedAchievementsRoute
   '/_authenticated/ai-insights': typeof AuthenticatedAiInsightsRoute
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
   '/_authenticated/calendar': typeof AuthenticatedCalendarRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/gamification': typeof AuthenticatedGamificationRoute
+  '/_authenticated/leaderboard': typeof AuthenticatedLeaderboardRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/reports': typeof AuthenticatedReportsRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/staff/$id': typeof AuthenticatedStaffIdRoute
   '/_authenticated/staff/': typeof AuthenticatedStaffIndexRoute
 }
@@ -120,38 +167,53 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/achievements'
     | '/ai-insights'
     | '/analytics'
     | '/attendance'
     | '/calendar'
     | '/dashboard'
     | '/gamification'
+    | '/leaderboard'
     | '/notifications'
+    | '/profile'
+    | '/reports'
+    | '/settings'
     | '/staff/$id'
     | '/staff/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/achievements'
     | '/ai-insights'
     | '/analytics'
     | '/attendance'
     | '/calendar'
     | '/dashboard'
     | '/gamification'
+    | '/leaderboard'
     | '/notifications'
+    | '/profile'
+    | '/reports'
+    | '/settings'
     | '/staff/$id'
     | '/staff'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/_authenticated/achievements'
     | '/_authenticated/ai-insights'
     | '/_authenticated/analytics'
     | '/_authenticated/attendance'
     | '/_authenticated/calendar'
     | '/_authenticated/dashboard'
     | '/_authenticated/gamification'
+    | '/_authenticated/leaderboard'
     | '/_authenticated/notifications'
+    | '/_authenticated/profile'
+    | '/_authenticated/reports'
+    | '/_authenticated/settings'
     | '/_authenticated/staff/$id'
     | '/_authenticated/staff/'
   fileRoutesById: FileRoutesById
@@ -176,6 +238,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/achievements': {
+      id: '/_authenticated/achievements'
+      path: '/achievements'
+      fullPath: '/achievements'
+      preLoaderRoute: typeof AuthenticatedAchievementsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/ai-insights': {
       id: '/_authenticated/ai-insights'
@@ -219,11 +288,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGamificationRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/leaderboard': {
+      id: '/_authenticated/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof AuthenticatedLeaderboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/notifications': {
       id: '/_authenticated/notifications'
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reports': {
+      id: '/_authenticated/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthenticatedReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/staff/': {
@@ -244,25 +341,35 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAchievementsRoute: typeof AuthenticatedAchievementsRoute
   AuthenticatedAiInsightsRoute: typeof AuthenticatedAiInsightsRoute
   AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
   AuthenticatedCalendarRoute: typeof AuthenticatedCalendarRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedGamificationRoute: typeof AuthenticatedGamificationRoute
+  AuthenticatedLeaderboardRoute: typeof AuthenticatedLeaderboardRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStaffIdRoute: typeof AuthenticatedStaffIdRoute
   AuthenticatedStaffIndexRoute: typeof AuthenticatedStaffIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAchievementsRoute: AuthenticatedAchievementsRoute,
   AuthenticatedAiInsightsRoute: AuthenticatedAiInsightsRoute,
   AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
   AuthenticatedCalendarRoute: AuthenticatedCalendarRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedGamificationRoute: AuthenticatedGamificationRoute,
+  AuthenticatedLeaderboardRoute: AuthenticatedLeaderboardRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedReportsRoute: AuthenticatedReportsRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStaffIdRoute: AuthenticatedStaffIdRoute,
   AuthenticatedStaffIndexRoute: AuthenticatedStaffIndexRoute,
 }
