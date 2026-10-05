@@ -61,31 +61,40 @@ function AdminAttendance() {
 
   const mark = useMutation({
     mutationFn: async (input: { profileId: string; status: AttendanceStatus }) => {
-      const row = { profile_id: input.profileId, date, status: input.status, check_in: "09:00", check_out: "17:00" };
-      if (input.status === "absent" || input.status === "leave") {
-        row.check_in = null;
-        row.check_out = null;
-      }
-      return row;
+      const off = input.status === "absent" || input.status === "leave";
+      const { error } = await supabase.from("attendance").upsert(
+        {
+          profile_id: input.profileId,
+          date,
+          status: input.status,
+          check_in: off ? null : "09:00",
+          check_out: off ? null : "17:00",
+        },
+        { onConflict: "profile_id,date" },
+      );
+      if (error) throw new Error(error.message);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["clockitData"] });
+      void queryClient.invalidateQueries({ queryKey: ["attendance"] });
       toast.success("Attendance saved");
     },
     onError: (error: Error) => toast.error(error.message),
   });
 
   const markAllPresent = useMutation({
-    mutationFn: async () =>
-      visible.map((profile) => ({
+    mutationFn: async () => {
+      const payload = visible.map((profile) => ({
         profile_id: profile.id,
         date,
         status: "present" as AttendanceStatus,
         check_in: "09:00",
         check_out: "17:00",
-      })),
+      }));
+      const { error } = await supabase.from("attendance").upsert(payload, { onConflict: "profile_id,date" });
+      if (error) throw new Error(error.message);
+    },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["clockitData"] });
+      void queryClient.invalidateQueries({ queryKey: ["attendance"] });
       toast.success("Everyone marked present");
     },
     onError: (error: Error) => toast.error(error.message),
