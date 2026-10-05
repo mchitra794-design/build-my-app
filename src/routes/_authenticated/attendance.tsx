@@ -1,3 +1,4 @@
+import { supabase } from "@/integrations/supabase/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Camera, CheckCircle2 } from "lucide-react";
