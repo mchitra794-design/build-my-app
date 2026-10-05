@@ -40,16 +40,16 @@ function ProfilePage() {
 
   async function saveProfile() {
     const { error } = await supabase.from("profiles").update({ full_name: name, phone }).eq("id", profile!.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await refresh();
     void queryClient.invalidateQueries({ queryKey: ["profiles"] });
     toast.success("Profile updated");
   }
 
   async function changePassword() {
-    if (password.length < 8) return toast.error("Use at least 8 characters");
+    if (password.length < 8) { toast.error("Use at least 8 characters"); return; }
     const { error } = await supabase.auth.updateUser({ password });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setPassword("");
     toast.success("Password changed");
   }

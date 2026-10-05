@@ -231,7 +231,7 @@ export function predictAttendance(rows: AttendanceRow[], name = "This staff memb
   const lateCount = lastTen.filter((r) => r.status === "late").length;
   let consecutiveAbsences = 0;
   for (let i = sorted.length - 1; i >= 0; i -= 1) {
-    if (sorted[i].status === "absent") consecutiveAbsences += 1;
+    if (sorted[i]?.status === "absent") consecutiveAbsences += 1;
     else break;
   }
 

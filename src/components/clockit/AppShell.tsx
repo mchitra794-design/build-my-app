@@ -56,7 +56,7 @@ export function AppShell({
   children,
 }: {
   title: string;
-  subtitle?: string;
+  subtitle?: string | undefined;
   actions?: React.ReactNode;
   children: React.ReactNode;
 }) {
