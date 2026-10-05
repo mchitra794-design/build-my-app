@@ -8,7 +8,7 @@ export function StatCard({
 }: {
   label: string;
   value: string | number;
-  hint?: string;
+  hint?: string | undefined;
   tone?: "default" | "ok" | "warn" | "crit" | "brand";
 }) {
   const valueTone =
@@ -40,7 +40,7 @@ export function Panel({
   className,
 }: {
   title?: string;
-  subtitle?: string;
+  subtitle?: string | undefined;
   action?: React.ReactNode;
   children: React.ReactNode;
   brand?: boolean;
