@@ -49,7 +49,8 @@ function AdminAttendance() {
   const [search, setSearch] = useState("");
 
   const dayRows = useMemo(
-    () => new Map(attendance.filter((row) => row.date === date).map((row) => [row.profile_id, row])),
+    () =>
+      new Map(attendance.filter((row) => row.date === date).map((row) => [row.profile_id, row])),
     [attendance, date],
   );
 
@@ -57,7 +58,9 @@ function AdminAttendance() {
     (profile) =>
       (department === "all" || profile.department === department) &&
       (search.trim() === "" ||
-        `${profile.full_name} ${profile.staff_id} ${profile.email}`.toLowerCase().includes(search.toLowerCase())),
+        `${profile.full_name} ${profile.staff_id} ${profile.email}`
+          .toLowerCase()
+          .includes(search.toLowerCase())),
   );
 
   const mark = useMutation({
@@ -91,7 +94,9 @@ function AdminAttendance() {
         check_in: "09:00",
         check_out: "17:00",
       }));
-      const { error } = await supabase.from("attendance").upsert(payload, { onConflict: "profile_id,date" });
+      const { error } = await supabase
+        .from("attendance")
+        .upsert(payload, { onConflict: "profile_id,date" });
       if (error) throw new Error(error.message);
     },
     onSuccess: () => {
@@ -126,8 +131,17 @@ function AdminAttendance() {
         }
       >
         <div className="mb-5 flex flex-wrap gap-3">
-          <input type="date" value={date} onChange={(event) => setDate(event.target.value)} className={selectClass} />
-          <select value={department} onChange={(event) => setDepartment(event.target.value)} className={selectClass}>
+          <input
+            type="date"
+            value={date}
+            onChange={(event) => setDate(event.target.value)}
+            className={selectClass}
+          />
+          <select
+            value={department}
+            onChange={(event) => setDepartment(event.target.value)}
+            className={selectClass}
+          >
             <option value="all">All departments</option>
             {departmentList(profiles).map((item) => (
               <option key={item} value={item}>
@@ -149,7 +163,7 @@ function AdminAttendance() {
           <table className="w-full min-w-[720px] text-sm">
             <thead>
               <tr className="border-b border-border text-left">
-                {['Staff', 'Department', 'Current', 'Check in', 'Set status'].map((head) => (
+                {["Staff", "Department", "Current", "Check in", "Set status"].map((head) => (
                   <th key={head} className="mono-label pb-3 font-medium">
                     {head}
                   </th>
@@ -173,7 +187,13 @@ function AdminAttendance() {
                       </div>
                     </td>
                     <td className="py-3 text-muted-foreground">{profile.department}</td>
-                    <td className="py-3">{row ? <StatusPill status={row.status} /> : <span className="text-xs text-muted-foreground">Not marked</span>}</td>
+                    <td className="py-3">
+                      {row ? (
+                        <StatusPill status={row.status} />
+                      ) : (
+                        <span className="text-xs text-muted-foreground">Not marked</span>
+                      )}
+                    </td>
                     <td className="py-3 font-mono text-xs">{formatTime(row?.check_in ?? null)}</td>
                     <td className="py-3">
                       <select
@@ -220,10 +240,18 @@ function MyAttendance() {
     <AppShell title="My attendance" subtitle={`Required ${settings?.required_percentage ?? 80}%`}>
       {me ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-          <StatCard label="Attendance" value={`${me.stats.percentage}%`} tone={me.tier === "normal" ? "ok" : me.tier === "warning" ? "warn" : "crit"} />
+          <StatCard
+            label="Attendance"
+            value={`${me.stats.percentage}%`}
+            tone={me.tier === "normal" ? "ok" : me.tier === "warning" ? "warn" : "crit"}
+          />
           <StatCard label="Present" value={me.stats.present} tone="ok" />
           <StatCard label="Late" value={me.stats.late} tone="warn" />
-          <StatCard label="Leave / half day" value={me.stats.leave + me.stats.halfDay} tone="brand" />
+          <StatCard
+            label="Leave / half day"
+            value={me.stats.leave + me.stats.halfDay}
+            tone="brand"
+          />
           <StatCard label="Absent" value={me.stats.absent} tone="crit" />
         </div>
       ) : null}
@@ -231,7 +259,11 @@ function MyAttendance() {
       <div className="grid gap-6 xl:grid-cols-[1.4fr_0.6fr]">
         <Panel title="Attendance history" subtitle="Every recorded working day">
           <div className="mb-5 flex flex-wrap gap-3">
-            <select value={status} onChange={(event) => setStatus(event.target.value)} className={selectClass}>
+            <select
+              value={status}
+              onChange={(event) => setStatus(event.target.value)}
+              className={selectClass}
+            >
               <option value="all">All statuses</option>
               {ATTENDANCE_STATUSES.map((item) => (
                 <option key={item} value={item}>
@@ -245,7 +277,7 @@ function MyAttendance() {
             <table className="w-full min-w-[560px] text-sm">
               <thead>
                 <tr className="border-b border-border text-left">
-                  {['Date', 'Status', 'Check in', 'Check out', 'Remarks'].map((head) => (
+                  {["Date", "Status", "Check in", "Check out", "Remarks"].map((head) => (
                     <th key={head} className="mono-label pb-3 font-medium">
                       {head}
                     </th>
@@ -256,10 +288,12 @@ function MyAttendance() {
                 {rows.map((row) => (
                   <tr key={row.id} className="border-b border-border/60 last:border-0">
                     <td className="py-3 font-medium">{formatDate(row.date)}</td>
-                    <td className="py-3"><StatusPill status={row.status} /></td>
+                    <td className="py-3">
+                      <StatusPill status={row.status} />
+                    </td>
                     <td className="py-3 font-mono text-xs">{formatTime(row.check_in)}</td>
                     <td className="py-3 font-mono text-xs">{formatTime(row.check_out)}</td>
-                    <td className="py-3 text-xs text-muted-foreground">{row.remarks ?? '—'}</td>
+                    <td className="py-3 text-xs text-muted-foreground">{row.remarks ?? "—"}</td>
                   </tr>
                 ))}
                 {rows.length === 0 ? (
@@ -279,14 +313,24 @@ function MyAttendance() {
             <div className="mx-auto grid size-16 place-items-center rounded-2xl bg-primary/10 text-primary">
               <Camera className="size-7" />
             </div>
-            <p className="mt-4 text-sm font-medium">Face recognition is not available in this build.</p>
-            <button type="button" disabled title="Face recognition has not been implemented" className="mt-5 inline-flex cursor-not-allowed items-center gap-2 rounded-2xl bg-muted px-4 py-2 text-sm font-medium text-muted-foreground">
+            <p className="mt-4 text-sm font-medium">
+              Face recognition is not available in this build.
+            </p>
+            <button
+              type="button"
+              disabled
+              title="Face recognition has not been implemented"
+              className="mt-5 inline-flex cursor-not-allowed items-center gap-2 rounded-2xl bg-muted px-4 py-2 text-sm font-medium text-muted-foreground"
+            >
               <Camera className="size-4" /> Face check-in unavailable
             </button>
           </div>
-          <p className="mt-4 text-xs text-muted-foreground">This version does not collect or store face images or biometric templates.</p>
+          <p className="mt-4 text-xs text-muted-foreground">
+            This version does not collect or store face images or biometric templates.
+          </p>
         </Panel>
       </div>
     </AppShell>
   );
 }
+

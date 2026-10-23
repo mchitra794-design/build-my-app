@@ -1,6 +1,14 @@
 import { useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
-import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import type { Profile } from "@/lib/clockit";
@@ -40,10 +48,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const { error: bootstrapError } = await supabase.rpc("bootstrap_account");
       if (bootstrapError) throw bootstrapError;
-      const [{ data: profileRow, error: profileError }, { data: roleRows, error: roleError }] = await Promise.all([
-        supabase.from("profiles").select("*").eq("user_id", activeSession.user.id).maybeSingle(),
-        supabase.from("user_roles").select("role").eq("user_id", activeSession.user.id),
-      ]);
+      const [{ data: profileRow, error: profileError }, { data: roleRows, error: roleError }] =
+        await Promise.all([
+          supabase.from("profiles").select("*").eq("user_id", activeSession.user.id).maybeSingle(),
+          supabase.from("user_roles").select("role").eq("user_id", activeSession.user.id),
+        ]);
       if (profileError) throw profileError;
       if (roleError) throw roleError;
       if (currentRequest !== requestId.current) return;
@@ -96,23 +105,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const value = useMemo<AuthState>(() => ({
-    session,
-    profile,
-    role,
-    loading,
-    isAdmin: role === "admin",
-    refresh: () => loadAccount(session),
-    signOut: async () => {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      queryClient.clear();
-      setSession(null);
-      setProfile(null);
-      setRole(null);
-    },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [session, profile, role, loading]);
+  const value = useMemo<AuthState>(
+    () => ({
+      session,
+      profile,
+      role,
+      loading,
+      isAdmin: role === "admin",
+      refresh: () => loadAccount(session),
+      signOut: async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        queryClient.clear();
+        setSession(null);
+        setProfile(null);
+        setRole(null);
+      },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }),
+    [session, profile, role, loading],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -122,3 +134,4 @@ export function useAuth() {
   if (!context) throw new Error("useAuth must be used inside AuthProvider");
   return context;
 }
+
