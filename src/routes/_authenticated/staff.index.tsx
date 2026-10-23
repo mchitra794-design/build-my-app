@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState } from "react";\nimport { useQueryClient } from "@tanstack/react-query";\nimport { toast } from "sonner";\nimport { supabase } from "@/integrations/supabase/client";
 
 import { AppShell } from "@/components/clockit/AppShell";
 import { Panel, StatCard } from "@/components/clockit/StatCard";
@@ -23,7 +23,7 @@ const selectClass =
   "rounded-2xl border border-border bg-card px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 function StaffDirectory() {
-  const { profiles, summaries, loading } = useClockitData();
+  const { profiles, summaries, loading } = useClockitData();\n  const queryClient = useQueryClient();\n  const [adding, setAdding] = useState(false);\n  const [staffId, setStaffId] = useState("");\n  const [fullName, setFullName] = useState("");\n  const [email, setEmail] = useState("");\n  const [departmentName, setDepartmentName] = useState("Computer Science");\n  const [designation, setDesignation] = useState("Staff");
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("all");
   const [tier, setTier] = useState("all");
@@ -59,6 +59,33 @@ function StaffDirectory() {
           tone="crit"
         />
       </div>
+
+      <Panel title="Staff management" subtitle="Add and maintain staff profile records">
+        <button onClick={() => setAdding((value) => !value)} className="rounded-2xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
+          {adding ? "Cancel" : "Add staff"}
+        </button>
+        {adding ? (
+          <form onSubmit={(event) => void addStaff(event)} className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <input required value={staffId} onChange={(e) => setStaffId(e.target.value)} placeholder="Staff ID" className={selectClass} />
+            <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full name" className={selectClass} />
+            <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="College email" className={selectClass} />
+            <input required value={departmentName} onChange={(e) => setDepartmentName(e.target.value)} placeholder="Department" className={selectClass} />
+            <input required value={designation} onChange={(e) => setDesignation(e.target.value)} placeholder="Designation" className={selectClass} />
+            <button type="submit" className="rounded-2xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Save staff profile</button>
+          </form>
+        ) : null}
+        <div className="mt-5 space-y-2">
+          {profiles.map((profile) => (
+            <div key={profile.id} className="flex flex-wrap items-center gap-3 rounded-xl bg-muted/50 px-3 py-2 text-sm">
+              <span className="font-medium">{profile.full_name}</span>
+              <span className="mono-label">{profile.staff_id} · {profile.email} · {profile.department}</span>
+              <span className="ml-auto mono-label">{profile.account_status}</span>
+              <button onClick={() => void editStaff(profile)} className="rounded-lg bg-muted px-3 py-1 text-xs">Edit</button>
+              <button onClick={() => void toggleStaff(profile)} className="rounded-lg bg-muted px-3 py-1 text-xs">{profile.account_status === "active" ? "Deactivate" : "Reactivate"}</button>
+            </div>
+          ))}
+        </div>
+      </Panel>
 
       <Panel title="All staff" subtitle="Click a name for the full attendance profile">
         <div className="mb-5 flex flex-wrap gap-3">
