@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -33,51 +34,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const requestId = useRef(0);
 
-  async function loadAccount(activeSession: Session | null) {
-    const currentRequest = ++requestId.current;
-    queryClient.clear();
-    if (!activeSession) {
+  const loadAccount = useCallback(
+    async (activeSession: Session | null) => {
+      const currentRequest = ++requestId.current;
       queryClient.clear();
-      setProfile(null);
-      setRole(null);
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { error: bootstrapError } = await supabase.rpc("bootstrap_account");
-      if (bootstrapError) throw bootstrapError;
-      const [{ data: profileRow, error: profileError }, { data: roleRows, error: roleError }] =
-        await Promise.all([
-          supabase.from("profiles").select("*").eq("user_id", activeSession.user.id).maybeSingle(),
-          supabase.from("user_roles").select("role").eq("user_id", activeSession.user.id),
-        ]);
-      if (profileError) throw profileError;
-      if (roleError) throw roleError;
-      if (currentRequest !== requestId.current) return;
-      const nextProfile = (profileRow as unknown as Profile | null) ?? null;
-      if (nextProfile && nextProfile.account_status.toLowerCase() !== "active") {
-        await supabase.auth.signOut();
-        setSession(null);
+      if (!activeSession) {
         setProfile(null);
         setRole(null);
-        queryClient.clear();
+        setLoading(false);
         return;
       }
-      setProfile(nextProfile);
-      const roles = (roleRows ?? []).map((row) => row.role as Role);
-      setRole(roles.includes("admin") ? "admin" : roles.includes("staff") ? "staff" : null);
-    } catch (error) {
-      if (currentRequest === requestId.current) {
-        console.error("Unable to load the signed-in account", error);
-        setProfile(null);
-        setRole(null);
+
+      setLoading(true);
+      try {
+        const { error: bootstrapError } = await supabase.rpc("bootstrap_account");
+        if (bootstrapError) throw bootstrapError;
+        const [{ data: profileRow, error: profileError }, { data: roleRows, error: roleError }] =
+          await Promise.all([
+            supabase
+              .from("profiles")
+              .select("*")
+              .eq("user_id", activeSession.user.id)
+              .maybeSingle(),
+            supabase.from("user_roles").select("role").eq("user_id", activeSession.user.id),
+          ]);
+        if (profileError) throw profileError;
+        if (roleError) throw roleError;
+        if (currentRequest !== requestId.current) return;
+        const nextProfile = (profileRow as unknown as Profile | null) ?? null;
+        if (nextProfile && nextProfile.account_status.toLowerCase() !== "active") {
+          await supabase.auth.signOut();
+          setSession(null);
+          setProfile(null);
+          setRole(null);
+          queryClient.clear();
+          return;
+        }
+        setProfile(nextProfile);
+        const roles = (roleRows ?? []).map((row) => row.role as Role);
+        setRole(roles.includes("admin") ? "admin" : roles.includes("staff") ? "staff" : null);
+      } catch (error) {
+        if (currentRequest === requestId.current) {
+          console.error("Unable to load the signed-in account", error);
+          setProfile(null);
+          setRole(null);
+        }
+      } finally {
+        if (currentRequest === requestId.current) setLoading(false);
       }
-    } finally {
-      if (currentRequest === requestId.current) setLoading(false);
-    }
-  }
+    },
+    [queryClient],
+  );
 
   useEffect(() => {
     let active = true;
@@ -101,9 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       requestId.current += 1;
       subscription.subscription.unsubscribe();
     };
-    // Auth state is initialized once; subscription events refresh account state.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loadAccount]);
 
   const value = useMemo<AuthState>(
     () => ({
@@ -121,9 +126,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setProfile(null);
         setRole(null);
       },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }),
-    [session, profile, role, loading],
+    [session, profile, role, loading, loadAccount, queryClient],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
