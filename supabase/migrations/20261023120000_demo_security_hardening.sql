@@ -10,7 +10,8 @@ BEGIN
       OR NEW.email IS DISTINCT FROM OLD.email OR NEW.department IS DISTINCT FROM OLD.department
       OR NEW.designation IS DISTINCT FROM OLD.designation OR NEW.joining_date IS DISTINCT FROM OLD.joining_date
       OR NEW.account_status IS DISTINCT FROM OLD.account_status OR NEW.points IS DISTINCT FROM OLD.points
-      OR NEW.streak IS DISTINCT FROM OLD.streak OR NEW.avatar_url IS DISTINCT FROM OLD.avatar_url\n      OR NEW.created_at IS DISTINCT FROM OLD.created_at THEN
+      OR NEW.streak IS DISTINCT FROM OLD.streak OR NEW.avatar_url IS DISTINCT FROM OLD.avatar_url
+      OR NEW.created_at IS DISTINCT FROM OLD.created_at THEN
       RAISE EXCEPTION 'Staff may update only their own name and phone number';
     END IF;
   END IF;
