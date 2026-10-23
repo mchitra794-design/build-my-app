@@ -282,7 +282,7 @@ function MyAttendance() {
             <p className="mt-4 text-sm font-medium">Face recognition is not available in this build.</p>
             <button type="button" disabled title="Face recognition has not been implemented" className="mt-5 inline-flex cursor-not-allowed items-center gap-2 rounded-2xl bg-muted px-4 py-2 text-sm font-medium text-muted-foreground">
               <Camera className="size-4" /> Face check-in unavailable
-            </button>>
+            </button>
           </div>
           <p className="mt-4 text-xs text-muted-foreground">This version does not collect or store face images or biometric templates.</p>
         </Panel>
