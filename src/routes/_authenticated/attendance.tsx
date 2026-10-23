@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Camera, CheckCircle2 } from "lucide-react";
+import { Camera } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -274,26 +274,17 @@ function MyAttendance() {
           </div>
         </Panel>
 
-        <Panel title="Face check-in" subtitle="Biometric attendance">
+        <Panel title="Face check-in" subtitle="Not implemented">
           <div className="rounded-2xl border border-dashed border-border bg-muted/40 p-6 text-center">
             <div className="mx-auto grid size-16 place-items-center rounded-2xl bg-primary/10 text-primary">
               <Camera className="size-7" />
             </div>
-            <p className="mt-4 text-sm font-medium">{faceStatus}</p>
-            <button
-              onClick={() => {
-                setFaceStatus("Face matched successfully — attendance logged");
-                toast.success("Face recognition attendance captured");
-              }}
-              className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-            >
-              <CheckCircle2 className="size-4" />
-              Use face scan
-            </button>
+            <p className="mt-4 text-sm font-medium">Face recognition is not available in this build.</p>
+            <button type="button" disabled title="Face recognition has not been implemented" className="mt-5 inline-flex cursor-not-allowed items-center gap-2 rounded-2xl bg-muted px-4 py-2 text-sm font-medium text-muted-foreground">
+              <Camera className="size-4" /> Face check-in unavailable
+            </button>>
           </div>
-          <div className="mt-4 rounded-2xl bg-ok/10 p-3 text-xs text-ok">
-            Recommended: Keep your face clearly visible under good lighting.
-          </div>
+          <p className="mt-4 text-xs text-muted-foreground">This version does not collect or store face images or biometric templates.</p>
         </Panel>
       </div>
     </AppShell>

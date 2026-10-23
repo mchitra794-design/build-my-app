@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import type { Profile } from "@/lib/clockit";
@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [role, setRole] = useState<Role | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);\n  const loadRequest = useRef(0);
 
   async function loadAccount(activeSession: Session | null) {
     if (!activeSession) {
@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       supabase.from("user_roles").select("role").eq("user_id", activeSession.user.id),
     ]);
 
-    setProfile((profileRow as unknown as Profile) ?? null);
+    if (profileError || roleError) throw profileError ?? roleError;\n    if (requestId !== loadRequest.current) return;\n    const nextProfile = (profileRow as unknown as Profile) ?? null;\n    if (nextProfile && nextProfile.account_status.toLowerCase() !== "active") {\n      await supabase.auth.signOut();\n      setSession(null); setProfile(null); setRole(null);\n      return;\n    }\n    setProfile(nextProfile);
     const roles = (roleRows ?? []).map((r) => r.role as Role);
     setRole(roles.includes("admin") ? "admin" : roles.length > 0 ? "staff" : null);
     setLoading(false);
