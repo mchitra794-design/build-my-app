@@ -13,7 +13,7 @@ function AuthenticatedLayout() {
 
   useEffect(() => {
     if (!loading && !session) void navigate({ to: "/" });
-    else if (!loading && session && requiresAdmin && role && !isAdmin) void navigate({ to: "/dashboard", replace: true });
+    else if (!loading && session && requiresAdmin && !isAdmin) void navigate({ to: "/dashboard", replace: true });
   }, [loading, session, requiresAdmin, role, isAdmin, navigate]);
 
   if (loading || !session || (requiresAdmin && !role)) return <div className="grid min-h-screen place-items-center bg-background"><p className="mono-label">Loading ClockIn…</p></div>;
