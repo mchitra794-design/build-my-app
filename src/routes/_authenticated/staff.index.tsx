@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";\nimport { useQueryClient } from "@tanstack/react-query";\nimport { toast } from "sonner";\nimport { supabase } from "@/integrations/supabase/client";
+import { useState, type FormEvent } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 import { AppShell } from "@/components/clockit/AppShell";
 import { Panel, StatCard } from "@/components/clockit/StatCard";
@@ -23,7 +26,14 @@ const selectClass =
   "rounded-2xl border border-border bg-card px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 function StaffDirectory() {
-  const { profiles, summaries, loading } = useClockitData();\n  const queryClient = useQueryClient();\n  const [adding, setAdding] = useState(false);\n  const [staffId, setStaffId] = useState("");\n  const [fullName, setFullName] = useState("");\n  const [email, setEmail] = useState("");\n  const [departmentName, setDepartmentName] = useState("Computer Science");\n  const [designation, setDesignation] = useState("Staff");
+  const { profiles, summaries, loading } = useClockitData();
+  const queryClient = useQueryClient();
+  const [adding, setAdding] = useState(false);
+  const [staffId, setStaffId] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [departmentName, setDepartmentName] = useState("Computer Science");
+  const [designation, setDesignation] = useState("Staff");
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("all");
   const [tier, setTier] = useState("all");
