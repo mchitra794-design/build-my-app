@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const requestId = useRef(0);
 
   async function loadAccount(activeSession: Session | null) {
-    const currentRequest = ++requestId.current;
+    const currentRequest = ++requestId.current;\n    queryClient.clear();
     if (!activeSession) {
       queryClient.clear();
       setProfile(null);
